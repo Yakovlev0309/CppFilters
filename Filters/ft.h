@@ -16,8 +16,6 @@ public:
 
     template<class T>
     static void fft_impl(std::vector<std::complex<T>> &out, size_t len, bool forward);
-    static int fftWithoutWindow(int len, std::complex<double> *in, std::complex<double> *out, bool forward);
-
 };
 
 #endif // FT_H

@@ -13,6 +13,7 @@
 #include "qcustomplot.h"
 
 #include "fft.hpp"
+#include "fft_filter.h"
 
 enum class FilterType
 {
@@ -49,6 +50,10 @@ private slots:
 
     void on_lpCicFilter_clicked();
 
+    void on_lpFftFilter_clicked();
+
+    void on_lpBatterworthFilter_clicked();
+
 private:
     void updateValues();
 
@@ -84,6 +89,7 @@ private:
     double freq;
     double sampleRate;
     int noiseCount;
+    double freqFactor;
 
     int filterSize;
     double cutoffFreq;

@@ -182,7 +182,7 @@ void MainWindow::on_cicFilter_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, ampl, noiseCount);
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     CIC_OLD cic(R, N, M);
@@ -247,7 +247,7 @@ void MainWindow::on_slidingWindowAverage_clicked()
         break;
     }
 
-    signal = SignalGen::addSomeNoise(signal, freq, ampl, noiseCount);
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     auto filtered = FIR::slidingWindowAverage(signal, filterSize);
@@ -264,6 +264,9 @@ void MainWindow::on_slidingWindowAverage_clicked()
         mSignal.push_back(20 * log10(abs(f)));
     }
     plot(mSignal, mSignalPlot);
+
+    plot(signal, comparePlot);
+    plot(filtered, comparePlot, Qt::GlobalColor::darkGreen, Qt::GlobalColor::darkRed, 3);
 
     replot();
 }
@@ -295,6 +298,7 @@ void MainWindow::updateValues()
     freq = ui->freq->text().toDouble();
     sampleRate = ui->sampleRate->text().toDouble();
     noiseCount = ui->noiseCount->text().toInt();
+    freqFactor = ui->freqFactor->text().toDouble();
 
     filterSize = ui->filterSize->text().toInt();
     cutoffFreq = ui->cutoffFreq->text().toDouble();
@@ -324,7 +328,7 @@ void MainWindow::firFilter(const FilterType &filterType)
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, ampl, noiseCount);
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     std::vector<double> coeffs;
@@ -343,11 +347,11 @@ void MainWindow::firFilter(const FilterType &filterType)
     auto filtered = FIR::filter(signal, coeffs);
     plot(filtered, filteredPlot);
 
-    auto signalSpectrum = absFft(Fft::fft(signal, false));
+    auto signalSpectrum = absFft(Fft::fft(signal, true));
     plot(signalSpectrum, fSignalPlot);
-    auto filteredSpectrum = absFft(Fft::fft(filtered, false));
+    auto filteredSpectrum = absFft(Fft::fft(filtered, true));
     plot(filteredSpectrum, fFilteredPlot);
-    auto coeffsSpectrum = absFft(Fft::fft(coeffs, false));
+    auto coeffsSpectrum = absFft(Fft::fft(coeffs, true));
     plot(coeffsSpectrum, fFilterPlot, Qt::GlobalColor::darkRed);
 
     std::vector<double> mSignal; // Логарифмированный спектр сигнала
@@ -381,15 +385,88 @@ void MainWindow::on_lpCicFilter_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, ampl, noiseCount);
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
-    auto filtered = CIC::filter(signal, 20, 15);
+    auto filtered = CIC::filter(signal, R, N);
     plot(filtered, filteredPlot);
 
-    auto signalSpectrum = absFft(Fft::fft(signal, false));
+    auto signalSpectrum = absFft(Fft::fft(signal, true));
     plot(signalSpectrum, fSignalPlot);
-    auto filteredSpectrum = absFft(Fft::fft(filtered, false));
+    auto filteredSpectrum = absFft(Fft::fft(filtered, true));
+    plot(filteredSpectrum, fFilteredPlot);
+
+    std::vector<double> mSignal; // Логарифмированный спектр сигнала
+    for (auto f : qAsConst(signalSpectrum))
+    {
+        mSignal.push_back(20 * log10(abs(f)));
+    }
+    plot(mSignal, mSignalPlot);
+
+    plot(signal, comparePlot);
+    plot(filtered, comparePlot, Qt::GlobalColor::darkGreen, Qt::GlobalColor::darkRed, 3);
+
+    replot();
+}
+
+void MainWindow::on_lpFftFilter_clicked()
+{
+    updateValues();
+    clearGraphs();
+
+    std::vector<std::complex<double>> signal; // Сигнал
+    switch (signalType->checkedId())
+    {
+    default:
+        signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
+        break;
+    }
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    plot(signal, signalPlot);
+
+    std::vector<std::complex<double>> filtered = signal;
+    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), cutoffFreq, sampleRate / 2.0, sampleRate, filterSize);
+    plot(filtered, filteredPlot);
+
+    auto signalSpectrum = absFft(Fft::fft(signal, true));
+    plot(signalSpectrum, fSignalPlot);
+    auto filteredSpectrum = absFft(Fft::fft(filtered, true));
+    plot(filteredSpectrum, fFilteredPlot);
+
+    std::vector<double> mSignal; // Логарифмированный спектр сигнала
+    for (auto f : qAsConst(signalSpectrum))
+    {
+        mSignal.push_back(20 * log10(abs(f)));
+    }
+    plot(mSignal, mSignalPlot);
+
+    plot(signal, comparePlot);
+    plot(filtered, comparePlot, Qt::GlobalColor::darkGreen, Qt::GlobalColor::darkRed, 3);
+
+    replot();
+}
+
+void MainWindow::on_lpBatterworthFilter_clicked()
+{
+    updateValues();
+    clearGraphs();
+
+    std::vector<std::complex<double>> signal; // Сигнал
+    switch (signalType->checkedId())
+    {
+    default:
+        signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
+        break;
+    }
+    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    plot(signal, signalPlot);
+
+    auto filtered = FFT_Filter::filter(signal, cutoffFreq, sampleRate);
+    plot(filtered, filteredPlot);
+
+    auto signalSpectrum = absFft(Fft::fft(signal, true));
+    plot(signalSpectrum, fSignalPlot);
+    auto filteredSpectrum = absFft(Fft::fft(filtered, true));
     plot(filteredSpectrum, fFilteredPlot);
 
     std::vector<double> mSignal; // Логарифмированный спектр сигнала

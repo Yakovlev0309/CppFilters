@@ -23,7 +23,7 @@ std::vector<std::complex<double>> SignalGen::getSin(int samplesCount, double amp
     return signal;
 }
 
-std::vector<std::complex<double>> SignalGen::addSomeNoise(const std::vector<std::complex<double>> &signal, double freq, double ampl, int noiseCount)
+std::vector<std::complex<double>> SignalGen::addSomeNoise(const std::vector<std::complex<double>> &signal, double freq, int noiseCount, double freqFactor)
 {
     if (noiseCount == 0)
         return signal;
@@ -34,8 +34,8 @@ std::vector<std::complex<double>> SignalGen::addSomeNoise(const std::vector<std:
     {
         for (int j = 0; j < signal.size(); j++)
         {
-            real = (double)rand() / RAND_MAX * sin(2 * M_PI * (double)rand() / RAND_MAX * freq);
-            imag = (double)rand() / RAND_MAX * cos(2 * M_PI * (double)rand() / RAND_MAX * freq);
+            real = (double)rand() / RAND_MAX * sin(2 * M_PI * (double)rand() / RAND_MAX * freq * freqFactor);
+            imag = (double)rand() / RAND_MAX * cos(2 * M_PI * (double)rand() / RAND_MAX * freq * freqFactor);
             res[j] += std::complex<double>(real, imag);
         }
     }

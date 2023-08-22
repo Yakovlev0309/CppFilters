@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1277</width>
-    <height>759</height>
+    <height>792</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -277,6 +277,26 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Множитель частоты шума</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="freqFactor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -320,6 +340,20 @@
            <widget class="QPushButton" name="lpCicFilter">
             <property name="text">
              <string>CIC-фильтр НЧ</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="lpFftFilter">
+            <property name="text">
+             <string>FFT-фильтр НЧ</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="lpBatterworthFilter">
+            <property name="text">
+             <string>Фильтр Баттерворта (FFT-фильтр) НЧ</string>
             </property>
            </widget>
           </item>
@@ -422,7 +456,7 @@
              <item row="1" column="1">
               <widget class="QLineEdit" name="N">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -442,7 +476,7 @@
              <item row="0" column="1">
               <widget class="QLineEdit" name="R">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -455,7 +489,7 @@
              <item row="2" column="1">
               <widget class="QLineEdit" name="M">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
