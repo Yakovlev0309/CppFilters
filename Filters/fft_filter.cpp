@@ -187,52 +187,34 @@ int FFT_Filter::filtration(FILTRATION_TYPE ftype, int len, std::complex<double> 
         sampleHighNeg = -1;
     }
 
-    int threads = 1;
-    memcpy((void*)out,(void*)in,len*sizeof(std::complex<double>));//копируем данные для обработки
-
-//    threads = omp_get_num_procs();
-//    omp_set_dynamic(0);
-//    omp_set_num_threads(threads);
-
-    int slices = len / window_size;
-    int cycles = slices/threads;
-    if(slices - (cycles*threads) != 0)
+    std::vector<std::complex<double>> signal(len);
+    for (int i = 0; i < len; i++)
+        signal[i] = in[i];
+    auto filtered = Fft::fft(signal, true);
+//    fftWithoutWindow(window_size, &out[offset], &out[offset], true);
+    for(int i = 0; i < window_size; i++)//применяем коэффициенты фильтра
     {
-        cycles++;
-    }
-
-    for(int cycle = 0; cycle < cycles; cycle++)
-    {
-#pragma omp parallel for
-        for(int j = 0; j < threads; j++)
+        int index = 0;//для определения границ полосы пропускания необходимо пересчитать индексы, так как после БПФ спектр имеет нулевые частоты по краям а не в центре
+        if(i<window_size/2)
         {
-            int offset = threads*window_size*cycle + j*window_size;
-            if((offset+window_size)>len)
-            {
-                continue;
-            }
+            index = i + window_size/2;
+        }
+        else
+        {
+            index = i - window_size/2;
+        }
 
-            fftWithoutWindow(window_size, &out[offset], &out[offset], true);
-            for(int i = 0; i < window_size; i++)//применяем коэффициенты фильтра
-            {
-                int index = 0;//для определения границ полосы пропускания необходимо пересчитать индексы, так как после БПФ спектр имеет нулевые частоты по краям а не в центре
-                if(i<window_size/2)
-                {
-                    index = i + window_size/2;
-                }
-                else
-                {
-                    index = i - window_size/2;
-                }
-
-                if(!((i>=(sampleLowPos) && i<(sampleHighPos-1))||(i>=(sampleHighNeg) && i<(sampleLowNeg-1))))
-                {
-                    out[index+offset] = 0.0;
-                }
-            }
-            fftWithoutWindow(window_size, &out[offset], &out[offset], false);
+        if(!((i>=(sampleLowPos) && i<(sampleHighPos-1))||(i>=(sampleHighNeg) && i<(sampleLowNeg-1))))
+        {
+            filtered[index] = 0.0;
         }
     }
+//    fftWithoutWindow(window_size, &out[offset], &out[offset], false);
+    filtered = Fft::fft(filtered, false);
+
+    for (int i = 0; i < len; i++)
+        out[i] = filtered[i];
+
     return 1;
 }
 

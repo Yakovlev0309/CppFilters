@@ -10,6 +10,8 @@ class FIR
 public:
     FIR();
     
+    static std::vector<std::complex<double>> compensatePhaseDelay(const std::vector<std::complex<double>> &signal, int filterSize);
+
     static std::vector<double> getLowPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);
     static std::vector<double> getHighPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);
 
@@ -20,7 +22,7 @@ public:
 
     static std::vector<double> getFilterCoeffs(int filterSize, double passbandFreq, double stopbandFreq, double sampleRate);
     static std::vector<double> getFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);
-    static std::vector<std::complex<double>> filter(const std::vector<std::complex<double>> signal, const std::vector<double> &coeffs);
+    static std::vector<std::complex<double>> filter(const std::vector<std::complex<double>> &signal, const std::vector<double> &coeffs);
     template <class T>
     static std::vector<T> slidingWindowAverage(const std::vector<T> &array, int win);
 };

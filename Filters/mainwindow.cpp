@@ -319,7 +319,7 @@ std::vector<double> MainWindow::absFft(const std::vector<std::complex<double>> &
     return res;
 }
 
-void MainWindow::firFilter(const FilterType &filterType)
+void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
 {
     std::vector<std::complex<double>> signal; // Сигнал
     switch (signalType->checkedId())
@@ -335,6 +335,9 @@ void MainWindow::firFilter(const FilterType &filterType)
     switch (filterType)
     {
     case FilterType::LOW_PASS:
+//        coeffs.resize(filterSize);
+//        for (int i = 0; i < filterSize; i++)
+//            coeffs[i] = 1.0 / filterSize;
         coeffs = FIR::getLowPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
         break;
     default:
@@ -344,7 +347,9 @@ void MainWindow::firFilter(const FilterType &filterType)
 
     plot(coeffs, filterPlot);
 
-    auto filtered = FIR::filter(signal, coeffs);
+    auto filtered = FIR::apply_fir_filter(signal, coeffs);
+//    auto filtered = FIR::filter(signal, coeffs);
+    filtered = FIR::compensatePhaseDelay(filtered, filterSize);
     plot(filtered, filteredPlot);
 
     auto signalSpectrum = absFft(Fft::fft(signal, true));
@@ -424,8 +429,10 @@ void MainWindow::on_lpFftFilter_clicked()
     signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
+    int windowSize = filterSize;
+
     std::vector<std::complex<double>> filtered = signal;
-    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), cutoffFreq, sampleRate / 2.0, sampleRate, filterSize);
+    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), cutoffFreq, sampleRate / 2.0, sampleRate, windowSize);
     plot(filtered, filteredPlot);
 
     auto signalSpectrum = absFft(Fft::fft(signal, true));

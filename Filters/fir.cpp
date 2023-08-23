@@ -7,6 +7,29 @@ FIR::FIR()
 
 }
 
+std::vector<std::complex<double>> FIR::compensatePhaseDelay(const std::vector<std::complex<double>> &signal, int filterSize)
+{
+//    int size = signal.size();
+//    int halfFilterSize = filterSize / 2;
+//    std::vector<std::complex<double>> withoutDelays(size);
+//    for (int i = halfFilterSize; i < size - halfFilterSize; i++)
+//    {
+//        withoutDelays[i - halfFilterSize] = signal[i];
+//    }
+//    return withoutDelays;
+
+    std::vector<std::complex<double>> withoutDelays = signal;
+    auto begin = withoutDelays.begin();
+    auto end = withoutDelays.begin() + filterSize / 2;
+    withoutDelays.erase(begin, end);
+
+    begin = withoutDelays.end() - filterSize / 2;
+    end = withoutDelays.end() - 1;
+    withoutDelays.erase(begin, end);
+
+    return withoutDelays;
+}
+
 std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate)
 {
     std::vector<double> coefficients(filterSize);
@@ -208,7 +231,7 @@ std::vector<double> FIR::getFilterCoeffs(int filterSize, double cutoffFreq, doub
     return H;
 }
 
-std::vector<std::complex<double>> FIR::filter(const std::vector<std::complex<double>> signal, const std::vector<double> &coeffs)
+std::vector<std::complex<double>> FIR::filter(const std::vector<std::complex<double> > &signal, const std::vector<double> &coeffs)
 {
     int sizeIn = signal.size();
     int filterSize = coeffs.size();
