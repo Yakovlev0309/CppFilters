@@ -335,9 +335,6 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
     switch (filterType)
     {
     case FilterType::LOW_PASS:
-//        coeffs.resize(filterSize);
-//        for (int i = 0; i < filterSize; i++)
-//            coeffs[i] = 1.0 / filterSize;
         coeffs = FIR::getLowPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
         break;
     default:

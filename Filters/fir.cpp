@@ -35,7 +35,7 @@ std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFre
     std::vector<double> coefficients(filterSize);
 
     // Вычисляем центральный индекс
-    int center = filterSize / 2;
+    double center = filterSize / 2.0;
 
     // Вычисляем значение сдвига частоты среза
     double normalizedCutoffFreq = cutoffFreq / sampleRate;
@@ -52,6 +52,10 @@ std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFre
         else
             coeff = sin(2 * M_PI * normalizedCutoffFreq * offset) / (M_PI * offset);
 
+        // Весовая функция Блекмена
+        double w = 0.42 + 0.5 * cosl((2 * M_PI * offset) / (filterSize - 1)) + 0.08 * cosl((4 * M_PI * offset) / (filterSize - 1));
+        coeff *= w;
+
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;
     }
@@ -64,7 +68,7 @@ std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFr
     std::vector<double> coefficients(filterSize);
 
     // Вычисляем центральный индекс
-    int center = filterSize / 2;
+    double center = filterSize / 2.0;
 
     // Вычисляем значение сдвига частоты среза
     double normalizedCutoffFreq = cutoffFreq / sampleRate;
@@ -82,6 +86,11 @@ std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFr
             coeff = sin(2 * M_PI * normalizedCutoffFreq * offset) / (M_PI * offset);
 
         coeff *= pow(-1, n);
+
+        // Весовая функция Блекмена
+        double w = 0.42 + 0.5 * cosl((2 * M_PI * offset) / (filterSize - 1)) + 0.08 * cosl((4 * M_PI * offset) / (filterSize - 1));
+        coeff *= w;
+
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;
     }
