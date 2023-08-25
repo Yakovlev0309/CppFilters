@@ -321,6 +321,8 @@ std::vector<double> MainWindow::absFft(const std::vector<std::complex<double>> &
 
 void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
 {
+//    filterSize = 2 * filterSize - 1;
+
     std::vector<std::complex<double>> signal; // Сигнал
     switch (signalType->checkedId())
     {
@@ -429,7 +431,7 @@ void MainWindow::on_lpFftFilter_clicked()
     int windowSize = filterSize;
 
     std::vector<std::complex<double>> filtered = signal;
-    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), cutoffFreq, sampleRate / 2.0, sampleRate, windowSize);
+    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), 0, cutoffFreq, sampleRate, windowSize);
     plot(filtered, filteredPlot);
 
     auto signalSpectrum = absFft(Fft::fft(signal, true));

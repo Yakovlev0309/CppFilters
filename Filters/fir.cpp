@@ -52,7 +52,7 @@ std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFre
         else
             coeff = sin(2 * M_PI * normalizedCutoffFreq * offset) / (M_PI * offset);
 
-        // Весовая функция Блекмена
+        // Весовая функция Блэкмана
         double w = 0.42 + 0.5 * cosl((2 * M_PI * offset) / (filterSize - 1)) + 0.08 * cosl((4 * M_PI * offset) / (filterSize - 1));
         coeff *= w;
 
