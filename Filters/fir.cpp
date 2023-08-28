@@ -2,6 +2,49 @@
 #include "fir.h"
 #include <cmath>
 
+double blackmanWindow(int n, int windowSize)
+{
+    // При alpha = 0.16
+    double a0 = 0.42, a1 = 0.5, a2 = 0.08;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cosl(2 * angle) + a2 * cosl(4 * angle);
+}
+
+double blackmanHarrisWindow(int n, int windowSize)
+{
+    double a0 = 0.35875, a1 = 0.48829, a2 = 0.14128, a3 = 0.01168;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cos(2 * angle) + a2 * cos(4 * angle) - a3 * cos(6 * angle);
+}
+
+double hammingWindow(int n, int windowSize)
+{
+    double a0 = 0.54, a1 = 0.46;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cos(2 * angle);
+}
+
+double nuttallWindow(int n, int windowSize)
+{
+    double a0 = 0.355768, a1 = 0.487396, a2 = 0.144232, a3 = 0.012604;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cos(2 * angle) + a2 * cos(4 * angle) - a3 * cos(6 * angle);
+}
+
+double blackmanNuttallWindow(int n, int windowSize)
+{
+    double a0 = 0.3635819, a1 = 0.4891775, a2 = 0.1365995, a3 = 0.0106411;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cos(2 * angle) + a2 * cos(4 * angle) - a3 * cos(6 * angle);
+}
+
+double flapTopWindow(int n, int windowSize)
+{
+    double a0 = 0.21557895, a1 = 0.41663158, a2 = 0.277263158, a3 = 0.083578947, a4 = 0.006947368;
+    double angle = M_PI * n / (windowSize - 1);
+    return a0 - a1 * cos(2 * angle) + a2 * cos(4 * angle) - a3 * cos(6 * angle) + a4 * cos(8 * angle);
+}
+
 FIR::FIR()
 {
 
@@ -52,9 +95,7 @@ std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFre
         else
             coeff = sin(2 * M_PI * normalizedCutoffFreq * offset) / (M_PI * offset);
 
-        // Весовая функция Блэкмана
-        double w = 0.42 + 0.5 * cosl((2 * M_PI * offset) / (filterSize - 1)) + 0.08 * cosl((4 * M_PI * offset) / (filterSize - 1));
-        coeff *= w;
+        coeff *= blackmanWindow(n, filterSize);
 
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;
@@ -87,9 +128,7 @@ std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFr
 
         coeff *= pow(-1, n);
 
-        // Весовая функция Блекмена
-        double w = 0.42 + 0.5 * cosl((2 * M_PI * offset) / (filterSize - 1)) + 0.08 * cosl((4 * M_PI * offset) / (filterSize - 1));
-        coeff *= w;
+        coeff *= blackmanWindow(n, filterSize);
 
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;
