@@ -106,6 +106,8 @@ std::vector<double> FIR::getLowPassFilterCoeffs(int filterSize, double cutoffFre
 
 std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate)
 {
+//    cutoffFreq += sampleRate / 2.0;
+
     std::vector<double> coefficients(filterSize);
 
     // Вычисляем центральный индекс
@@ -129,6 +131,45 @@ std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFr
         coeff *= pow(-1, n);
 
         coeff *= blackmanWindow(n, filterSize);
+
+        // Добавляем коэффициент в массив
+        coefficients[n] = coeff;
+    }
+
+    return coefficients;
+}
+
+std::vector<double> FIR::getBandPassFilterCoeffs(int filterSize, double lowCutoffFreq, double highCutoffFreq, double sampleRate)
+{
+    if (filterSize % 2 == 0)
+        filterSize++;
+
+    std::vector<double> coefficients(filterSize);
+
+    // Вычисляем центральный индекс
+    double center = filterSize / 2.0;
+
+    // Вычисляем значение сдвига частот среза
+    double lowNormalizedCutoffFreq = lowCutoffFreq / sampleRate;
+    double highNormalizedCutoffFreq = highCutoffFreq / sampleRate;
+
+    double offset, coeff;
+    // Вычисляем коэффициенты фильтра
+    for (int n = 0; n < filterSize; n++)
+    {
+        // Вычисляем смещение относительно центра
+        offset = n - center;
+
+        if (offset == 0)
+        {
+            coeff = 2 * (highNormalizedCutoffFreq - lowNormalizedCutoffFreq);
+        }
+        else
+        {
+            coeff = (sin(2 * M_PI * highNormalizedCutoffFreq * offset) - sin(2 * M_PI * lowNormalizedCutoffFreq * offset)) / (M_PI * offset);
+        }
+
+        coeff *= flapTopWindow(n, filterSize);
 
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;

@@ -14,6 +14,7 @@ public:
 
     static std::vector<double> getLowPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);
     static std::vector<double> getHighPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);
+    static std::vector<double> getBandPassFilterCoeffs(int filterSize, double lowCutoffFreq, double highCutoffFreq, double sampleRate);
 
     static std::vector<double> calculateKernels(int filterOrder, double cutoffFreq, double samplingFreq);
 

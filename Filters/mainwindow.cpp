@@ -337,10 +337,12 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
     switch (filterType)
     {
     case FilterType::LOW_PASS:
-        coeffs = FIR::getLowPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
+        coeffs = FIR::getBandPassFilterCoeffs(filterSize, 0, cutoffFreq, sampleRate);
+//        coeffs = FIR::getLowPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
         break;
     default:
-        coeffs = FIR::getHighPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
+        coeffs = FIR::getBandPassFilterCoeffs(filterSize, cutoffFreq, sampleRate / 2.0, sampleRate);
+//        coeffs = FIR::getHighPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
         break;
     }
 
