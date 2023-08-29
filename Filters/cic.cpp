@@ -6,36 +6,46 @@ CIC::CIC()
 
 }
 
-std::vector<std::complex<double>> CIC::filter(const std::vector<std::complex<double>> &signal, int decimation, int stages)
+std::vector<std::complex<double>> CIC::moving_average_filter(const std::vector<std::complex<double>>& input, int window_size)
 {
-    double gain = pow(decimation * 1, stages);
-
-    int c_stages = stages;
-    int i_stages = stages;
-
-
-    std::vector<Integrator> intes(i_stages);
-    std::vector<Comb> combs(c_stages);
-
-    std::vector<std::complex<double>> filtered;
-
-    for (int s = 0, v = 0; s < signal.size() ; s++)
-    {
-        std::complex<double> z = signal[v];
-        for (int i = 0; i < i_stages; i++)
-        {
-            z = intes[i].update(z);
+    std::vector<std::complex<double>> output(input.size() - window_size + 1);
+    std::complex<double> sum;
+    for (int i = 0; i < output.size(); ++i) {
+        sum = 0.0;
+        for (int j = 0; j < window_size; ++j) {
+            sum+= input[i + j];
         }
-        if (s % decimation == 0)
-        {
-            std::complex<double> j;
-            for (int c = 0; c < c_stages; c++)
-            {
-                z = combs[c].update(z);
-                j = z;
-            }
-            filtered.push_back(j / gain);
-        }
+        output[i] = sum / double(window_size);
     }
-    return filtered;
+
+    return output;
+}
+
+std::vector<std::complex<double>> CIC::cic_decimation_filter(const std::vector<std::complex<double>>& input, int decimation_factor, int num_stages, int differential_delay)
+{
+    std::vector<std::complex<double>> output(input.size() / decimation_factor);
+    std::complex<double> sum;
+    for (int i = 0; i < output.size(); ++i) {
+        sum = input[i * decimation_factor];
+        for (int j = 1; j < num_stages; ++j) {
+            sum += input[i * decimation_factor - j * differential_delay];
+        }
+        output[i] = sum;
+    }
+
+    return output;
+}
+
+std::vector<std::complex<double>> CIC::cic_interpolation_filter(const std::vector<std::complex<double>>& input, int interpolation_factor, int num_stages, int differential_delay) {
+    std::vector<std::complex<double>> output(input.size() * interpolation_factor);
+    std::complex<double> sum;
+    for (int i = 0; i < output.size(); ++i) {
+        sum = input[i / interpolation_factor];
+        for (int j = 1; j < num_stages; ++j) {
+            sum += input[i / interpolation_factor - j * differential_delay];
+        }
+        output[i] = sum;
+    }
+
+    return output;
 }

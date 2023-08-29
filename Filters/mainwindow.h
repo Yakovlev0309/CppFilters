@@ -40,19 +40,21 @@ private slots:
 
     void on_clearGraphs_clicked();
 
-    void on_cicFilter_clicked();
-
     void on_slidingWindowAverage_clicked();
 
     void on_lpFirFilter_clicked();
 
     void on_hpFirFilter_clicked();
 
-    void on_lpCicFilter_clicked();
-
     void on_lpFftFilter_clicked();
 
     void on_lpBatterworthFilter_clicked();
+
+    void on_cicFilter_clicked();
+
+    void on_cicDecimator_clicked();
+
+    void on_cicInterpolator_clicked();
 
 private:
     void updateValues();

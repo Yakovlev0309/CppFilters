@@ -337,9 +337,30 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="lpCicFilter">
+           <widget class="QPushButton" name="cicFilter">
             <property name="text">
-             <string>CIC-фильтр НЧ</string>
+             <string>CIC-фильтр</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="cicDecimator">
+            <property name="text">
+             <string>CIC-дециматор</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="cicInterpolator">
+            <property name="text">
+             <string>CIC-интерполятор</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="slidingWindowAverage">
+            <property name="text">
+             <string>Скользящее среднее окно</string>
             </property>
            </widget>
           </item>
@@ -354,20 +375,6 @@
            <widget class="QPushButton" name="lpBatterworthFilter">
             <property name="text">
              <string>Фильтр Баттерворта (FFT-фильтр) НЧ</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="slidingWindowAverage">
-            <property name="text">
-             <string>Скользящее среднее окно</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="cicFilter">
-            <property name="text">
-             <string>CIC (КИГ) фильтр</string>
             </property>
            </widget>
           </item>
@@ -469,7 +476,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="label_8">
                <property name="text">
-                <string>Децимация</string>
+                <string>Децимация/интерполяция</string>
                </property>
               </widget>
              </item>
