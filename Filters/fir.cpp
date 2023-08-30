@@ -52,22 +52,13 @@ FIR::FIR()
 
 std::vector<std::complex<double>> FIR::compensatePhaseDelay(const std::vector<std::complex<double>> &signal, int filterSize)
 {
-//    int size = signal.size();
-//    int halfFilterSize = filterSize / 2;
-//    std::vector<std::complex<double>> withoutDelays(size);
-//    for (int i = halfFilterSize; i < size - halfFilterSize; i++)
-//    {
-//        withoutDelays[i - halfFilterSize] = signal[i];
-//    }
-//    return withoutDelays;
-
     std::vector<std::complex<double>> withoutDelays = signal;
     auto begin = withoutDelays.begin();
     auto end = withoutDelays.begin() + filterSize / 2;
     withoutDelays.erase(begin, end);
 
     begin = withoutDelays.end() - filterSize / 2;
-    end = withoutDelays.end() - 1;
+    end = withoutDelays.end();
     withoutDelays.erase(begin, end);
 
     return withoutDelays;
@@ -141,13 +132,10 @@ std::vector<double> FIR::getHighPassFilterCoeffs(int filterSize, double cutoffFr
 
 std::vector<double> FIR::getBandPassFilterCoeffs(int filterSize, double lowCutoffFreq, double highCutoffFreq, double sampleRate)
 {
-    if (filterSize % 2 == 0)
-        filterSize++;
-
     std::vector<double> coefficients(filterSize);
 
     // Вычисляем центральный индекс
-    double center = filterSize / 2.0;
+    int center = filterSize / 2;
 
     // Вычисляем значение сдвига частот среза
     double lowNormalizedCutoffFreq = lowCutoffFreq / sampleRate;
@@ -225,15 +213,17 @@ std::vector<double> FIR::calculate_fir_filter_coefficients(int N, double cutoff_
 //    return taps;
 }
 
-std::vector<std::complex<double>> FIR::apply_fir_filter(const std::vector<std::complex<double>>& x, const std::vector<double>& h)
+std::vector<std::complex<double>> FIR::applyFirFilter(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs)
 {
-    int N = x.size();
-    int M = h.size();
-    std::vector<std::complex<double>> y(N + M - 1, 0);
-    for (int n = 0; n < N + M - 1; ++n) {
+    int N = signal.size();
+    int M = coeffs.size();
+    int newSize = M % 2 == 0 ? N + M : N + M - 1;
+    std::vector<std::complex<double>> y(newSize);
+    for (int n = 0; n < newSize; ++n) {
+        y[n] = 0.0;
         for (int k = 0; k < M; ++k) {
             if (n - k >= 0 && n - k < N) {
-                y[n] += h[k] * x[n - k];
+                y[n] += coeffs[k] * signal[n - k];
             }
         }
     }

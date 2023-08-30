@@ -19,7 +19,7 @@ public:
     static std::vector<double> calculateKernels(int filterOrder, double cutoffFreq, double samplingFreq);
 
     static std::vector<double> calculate_fir_filter_coefficients(int N, double cutoff_freq);
-    static std::vector<std::complex<double>> apply_fir_filter(const std::vector<std::complex<double>>& x, const std::vector<double>& h);
+    static std::vector<std::complex<double>> applyFirFilter(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs);
 
     static std::vector<double> getFilterCoeffs(int filterSize, double passbandFreq, double stopbandFreq, double sampleRate);
     static std::vector<double> getFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);

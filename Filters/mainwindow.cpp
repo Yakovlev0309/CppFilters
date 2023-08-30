@@ -258,8 +258,6 @@ std::vector<double> MainWindow::absFft(const std::vector<std::complex<double>> &
 
 void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
 {
-//    filterSize = 2 * filterSize - 1;
-
     std::vector<std::complex<double>> signal; // Сигнал
     switch (signalType->checkedId())
     {
@@ -284,8 +282,8 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
     }
 
     plot(coeffs, filterPlot);
-
-    auto filtered = FIR::apply_fir_filter(signal, coeffs);
+    
+    auto filtered = FIR::applyFirFilter(signal, coeffs);
 //    auto filtered = FIR::filter(signal, coeffs);
     filtered = FIR::compensatePhaseDelay(filtered, filterSize);
     plot(filtered, filteredPlot);
@@ -406,6 +404,9 @@ void MainWindow::on_cicFilter_clicked()
     signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
+    R = sampleRate / cutoffFreq;
+    ui->R->setText(QString::number(R));
+
     auto filtered = CIC::cic_decimation_filter(signal, R, M, N);
     filtered = CIC::cic_interpolation_filter(filtered, R, M, N);
     filtered = CIC::moving_average_filter(filtered, filterSize);
@@ -444,6 +445,9 @@ void MainWindow::on_cicDecimator_clicked()
     }
     signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
+
+    R = sampleRate / 2.0 / cutoffFreq;
+    ui->R->setText(QString::number(R));
 
     auto filtered = CIC::cic_decimation_filter(signal, R, M, N);
     filtered = CIC::moving_average_filter(filtered, filterSize);
