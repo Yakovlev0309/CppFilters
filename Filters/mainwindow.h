@@ -63,7 +63,7 @@ private:
     void clearGraphs();
     void replot();
 
-    std::vector<double> absFft(const std::vector<std::complex<double>> &fft);
+    std::vector<double> absComplex(const std::vector<std::complex<double>> &samples);
 
     void firFilter(const FilterType &filterType);
 

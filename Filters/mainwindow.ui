@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1277</width>
-    <height>792</height>
+    <height>822</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -339,7 +339,7 @@
           <item>
            <widget class="QPushButton" name="cicFilter">
             <property name="text">
-             <string>CIC-фильтр</string>
+             <string>CIC-дециматор + FIR-фильтр</string>
             </property>
            </widget>
           </item>

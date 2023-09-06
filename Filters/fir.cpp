@@ -157,7 +157,7 @@ std::vector<double> FIR::getBandPassFilterCoeffs(int filterSize, double lowCutof
             coeff = (sin(2 * M_PI * highNormalizedCutoffFreq * offset) - sin(2 * M_PI * lowNormalizedCutoffFreq * offset)) / (M_PI * offset);
         }
 
-        coeff *= flapTopWindow(n, filterSize);
+        coeff *= hammingWindow(n, filterSize);
 
         // Добавляем коэффициент в массив
         coefficients[n] = coeff;
@@ -213,7 +213,7 @@ std::vector<double> FIR::calculate_fir_filter_coefficients(int N, double cutoff_
 //    return taps;
 }
 
-std::vector<std::complex<double>> FIR::applyFirFilter(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs)
+std::vector<std::complex<double>> FIR::applyFilter(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs)
 {
     int N = signal.size();
     int M = coeffs.size();
@@ -359,3 +359,4 @@ std::vector<T> FIR::slidingWindowAverage(const std::vector<T> &array, int win)
 }
 
 template std::vector<std::complex<double>> FIR::slidingWindowAverage(const std::vector<std::complex<double>> &array, int win);
+template std::vector<double> FIR::slidingWindowAverage(const std::vector<double> &array, int win);
