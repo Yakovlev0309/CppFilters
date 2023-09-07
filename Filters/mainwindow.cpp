@@ -183,7 +183,7 @@ void MainWindow::on_slidingWindowAverage_clicked()
         break;
     }
 
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     auto filtered = FIR::slidingWindowAverage(signal, filterSize);
@@ -236,6 +236,7 @@ void MainWindow::updateValues()
     sampleRate = ui->sampleRate->text().toDouble();
     noiseCount = ui->noiseCount->text().toInt();
     freqFactor = ui->freqFactor->text().toDouble();
+    amplFactor = ui->amplFactor->text().toDouble();
 
     filterSize = ui->filterSize->text().toInt();
     cutoffFreq = ui->cutoffFreq->text().toDouble();
@@ -265,7 +266,7 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     std::vector<double> coeffs;
@@ -327,7 +328,7 @@ void MainWindow::on_lpFftFilter_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     int windowSize = filterSize;
@@ -366,7 +367,7 @@ void MainWindow::on_lpBatterworthFilter_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     auto filtered = FFT_Filter::filter(signal, cutoffFreq, sampleRate);
@@ -402,7 +403,7 @@ void MainWindow::on_cicFilter_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
 //    R = sampleRate / cutoffFreq;
@@ -444,7 +445,7 @@ void MainWindow::on_cicDecimator_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
 //    R = sampleRate / 2.0 / cutoffFreq;
@@ -484,7 +485,7 @@ void MainWindow::on_cicInterpolator_clicked()
         signal = SignalGen::getSin(samplesCount, ampl, freq, sampleRate);
         break;
     }
-    signal = SignalGen::addSomeNoise(signal, freq, noiseCount, freqFactor);
+    signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
     auto filtered = CIC::cic_interpolation_filter(signal, R, M, N);

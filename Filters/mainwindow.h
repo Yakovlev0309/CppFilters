@@ -92,6 +92,7 @@ private:
     double sampleRate;
     int noiseCount;
     double freqFactor;
+    double amplFactor;
 
     int filterSize;
     double cutoffFreq;
