@@ -95,14 +95,15 @@ void MainWindow::plot(std::vector<double> &signal, QCustomPlot *plot, const QCol
 
     int dataIndex = 0;
     auto end = signal.end();
+    int len = signal.size();
     for (auto begin = signal.begin(); begin != end; ++begin)
     {
-        graph->addData(dataIndex++, *begin);
+        graph->addData(dataIndex++ - len / 2, *begin);
     }
 
     if (signal.size() > 0)
     {
-        plot->xAxis->setRange(0, signal.size());
+        plot->xAxis->setRange(-len / 2, len / 2);
         plot->yAxis->setRange(*std::min_element(signal.begin(), signal.end()), *std::max_element(signal.begin(), signal.end()));
     }
 }
@@ -228,6 +229,16 @@ void MainWindow::on_hpFirFilter_clicked()
     replot();
 }
 
+void MainWindow::on_bpFirFilter_clicked()
+{
+    updateValues();
+    clearGraphs();
+
+    firFilter(FilterType::BAND_PASS);
+
+    replot();
+}
+
 void MainWindow::updateValues()
 {
     samplesCount = ui->samplesCount->text().toInt();
@@ -239,7 +250,8 @@ void MainWindow::updateValues()
     amplFactor = ui->amplFactor->text().toDouble();
 
     filterSize = ui->filterSize->text().toInt();
-    cutoffFreq = ui->cutoffFreq->text().toDouble();
+    lowCutoffFreq = ui->lowCutoffFreq->text().toDouble();
+    highCutoffFreq = ui->highCutoffFreq->text().toDouble();
 
     R = ui->R->text().toInt();
     N = ui->N->text().toInt();
@@ -273,12 +285,15 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
     switch (filterType)
     {
     case FilterType::LOW_PASS:
-        coeffs = FIR::getBandPassFilterCoeffs(filterSize, 0, cutoffFreq, sampleRate);
+        coeffs = FIR::getBandPassFilterCoeffs(filterSize, 0, highCutoffFreq, sampleRate);
 //        coeffs = FIR::getLowPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
         break;
-    default:
-        coeffs = FIR::getBandPassFilterCoeffs(filterSize, cutoffFreq, sampleRate / 2.0, sampleRate);
+    case FilterType::HIGH_PASS:
+        coeffs = FIR::getBandPassFilterCoeffs(filterSize, lowCutoffFreq, sampleRate / 2, sampleRate);
 //        coeffs = FIR::getHighPassFilterCoeffs(filterSize, cutoffFreq, sampleRate);
+        break;
+    default:
+        coeffs = FIR::getBandPassFilterCoeffs(filterSize, lowCutoffFreq, highCutoffFreq, sampleRate);
         break;
     }
 
@@ -334,7 +349,7 @@ void MainWindow::on_lpFftFilter_clicked()
     int windowSize = filterSize;
 
     std::vector<std::complex<double>> filtered = signal;
-    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), 0, cutoffFreq, sampleRate, windowSize);
+    FFT_Filter::filtration(FILTRATION_TYPE::low, signal.size(), signal.data(), filtered.data(), lowCutoffFreq, highCutoffFreq, sampleRate, windowSize);
     plot(filtered, filteredPlot);
 
     auto signalSpectrum = absComplex(Fft::fft(signal, true));
@@ -370,7 +385,7 @@ void MainWindow::on_lpBatterworthFilter_clicked()
     signal = SignalGen::addSomeNoise(signal, amplFactor, freq, noiseCount, freqFactor);
     plot(signal, signalPlot);
 
-    auto filtered = FFT_Filter::filter(signal, cutoffFreq, sampleRate);
+    auto filtered = FFT_Filter::filter(signal, highCutoffFreq, sampleRate);
     plot(filtered, filteredPlot);
 
     auto signalSpectrum = absComplex(Fft::fft(signal, true));
@@ -409,7 +424,7 @@ void MainWindow::on_cicFilter_clicked()
 //    R = sampleRate / cutoffFreq;
 //    ui->R->setText(QString::number(R));
 
-    auto coeffs = FIR::getBandPassFilterCoeffs(filterSize, 0, cutoffFreq, sampleRate);
+    auto coeffs = FIR::getBandPassFilterCoeffs(filterSize, lowCutoffFreq, highCutoffFreq, sampleRate);
     auto filtered = CIC::cic_decimation_filter(signal, R, M, N);
     filtered = FIR::applyFilter(filtered, coeffs);
     filtered = FIR::compensatePhaseDelay(filtered, filterSize);

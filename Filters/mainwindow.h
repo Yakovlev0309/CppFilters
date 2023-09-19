@@ -18,7 +18,8 @@
 enum class FilterType
 {
     LOW_PASS,
-    HIGH_PASS
+    HIGH_PASS,
+    BAND_PASS
 };
 
 QT_BEGIN_NAMESPACE
@@ -55,6 +56,8 @@ private slots:
     void on_cicDecimator_clicked();
 
     void on_cicInterpolator_clicked();
+
+    void on_bpFirFilter_clicked();
 
 private:
     void updateValues();
@@ -95,7 +98,8 @@ private:
     double amplFactor;
 
     int filterSize;
-    double cutoffFreq;
+    double lowCutoffFreq;
+    double highCutoffFreq;
 
     int R, N, M;
 };

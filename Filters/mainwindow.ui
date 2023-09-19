@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1277</width>
-    <height>822</height>
+    <height>850</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -357,6 +357,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="bpFirFilter">
+            <property name="text">
+             <string>Полосовой КИХ-фильтр</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="cicFilter">
             <property name="text">
              <string>CIC-дециматор + FIR-фильтр</string>
@@ -387,7 +394,7 @@
           <item>
            <widget class="QPushButton" name="lpFftFilter">
             <property name="text">
-             <string>FFT-фильтр НЧ</string>
+             <string>FFT</string>
             </property>
            </widget>
           </item>
@@ -395,13 +402,6 @@
            <widget class="QPushButton" name="lpBatterworthFilter">
             <property name="text">
              <string>Фильтр Баттерворта (FFT-фильтр) НЧ</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="clearGraphs">
-            <property name="text">
-             <string>Очистить</string>
             </property>
            </widget>
           </item>
@@ -430,19 +430,19 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>100</string>
+             <string>101</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_7">
             <property name="text">
-             <string>Частота среза, Гц</string>
+             <string>Нижняя частота среза, Гц</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="cutoffFreq">
+           <widget class="QLineEdit" name="lowCutoffFreq">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -450,7 +450,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>10</string>
+             <string>3</string>
             </property>
            </widget>
           </item>
@@ -529,10 +529,37 @@
             </layout>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Верхняя частота среза, Гц</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="highCutoffFreq">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>10</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="clearGraphs">
+      <property name="text">
+       <string>Очистить</string>
+      </property>
      </widget>
     </item>
    </layout>

@@ -215,14 +215,14 @@ std::vector<double> FIR::calculate_fir_filter_coefficients(int N, double cutoff_
 
 std::vector<std::complex<double>> FIR::applyFilter(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs)
 {
-    int N = signal.size();
-    int M = coeffs.size();
-    int newSize = M % 2 == 0 ? N + M : N + M - 1;
-    std::vector<std::complex<double>> y(newSize);
-    for (int n = 0; n < newSize; ++n) {
+    int len = signal.size();
+    int N = coeffs.size();
+    int newLen = len + N - 1; // Новое количество отсчётов с учётом задержки
+    std::vector<std::complex<double>> y(newLen);
+    for (int n = 0; n < newLen; ++n) {
         y[n] = 0.0;
-        for (int k = 0; k < M; ++k) {
-            if (n - k >= 0 && n - k < N) {
+        for (int k = 0; k < N; ++k) {
+            if (n - k >= 0 && n - k < len) {
                 y[n] += coeffs[k] * signal[n - k];
             }
         }
