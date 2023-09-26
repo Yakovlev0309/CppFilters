@@ -6,14 +6,11 @@
 #include <QDebug>
 
 #include "signalgen.h"
-#include "ft.h"
 #include "fir.h"
 #include "cic.h"
-#include "cic_old.h"
-#include "qcustomplot.h"
-
 #include "fft.hpp"
 #include "fft_filter.h"
+#include "plotter.h"
 
 enum class FilterType
 {
@@ -62,7 +59,6 @@ private slots:
 private:
     void updateValues();
 
-    void initPlot(QCustomPlot *plot, std::string &xLabel, std::string &yLabel);
     void clearGraphs();
     void replot();
 
@@ -73,8 +69,7 @@ private:
 private:
     Ui::MainWindow *ui;
 
-    void plot(std::vector<std::complex<double>> &signal, QCustomPlot *plot, const QColor &realColor = Qt::green, const QColor &imagColor = Qt::red, int width=1);
-    void plot(std::vector<double> &signal, QCustomPlot *plot, const QColor &color = Qt::blue, int width = 1);
+    Plotter plt;
 
     QCustomPlot *comparePlot;
     QCustomPlot *signalPlot;
@@ -86,8 +81,6 @@ private:
     QCustomPlot *mSignalPlot;
     QCustomPlot *mFilteredPlot;
     std::vector<QCustomPlot*> plots;
-
-    QButtonGroup *signalType;
 
     int samplesCount;
     double ampl;

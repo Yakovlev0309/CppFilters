@@ -1,5 +1,6 @@
 
 #include "fir.h"
+#include "fft.hpp"
 #include <cmath>
 
 double blackmanWindow(int n, int windowSize)
@@ -58,6 +59,23 @@ std::vector<std::complex<double>> FIR::compensatePhaseDelay(const std::vector<st
     withoutDelays.erase(begin, end);
 
     begin = withoutDelays.end() - filterSize / 2;
+    end = withoutDelays.end();
+    withoutDelays.erase(begin, end);
+
+    return withoutDelays;
+}
+
+std::vector<std::complex<double>> FIR::compensateDelay(const std::vector<std::complex<double>> &signal, int filterSize, int oldLen)
+{
+    std::vector<std::complex<double>> withoutDelays = signal;
+    auto begin = withoutDelays.begin();
+    auto end = withoutDelays.begin() + filterSize / 2;
+    withoutDelays.erase(begin, end);
+
+    int excess = signal.size() - oldLen - filterSize;
+    if (filterSize % 2 != 0)
+        excess += 1;
+    begin = withoutDelays.end() - filterSize / 2 - excess;
     end = withoutDelays.end();
     withoutDelays.erase(begin, end);
 
@@ -228,6 +246,57 @@ std::vector<std::complex<double>> FIR::applyFilter(const std::vector<std::comple
         }
     }
     return y;
+}
+
+int FIR::pow2(int len){
+
+    char pow = 0;
+    int num = 1;
+    while(num < len && num*2 - num <= len-num)
+    {
+        num *= 2;
+        pow++;
+    }
+
+    return pow;
+}
+
+bool FIR::isntPow2(int len){
+
+    return (pow(2, pow2(len)) != len);
+}
+
+std::vector<std::complex<double>> FIR::applyFilterInSpectrum(const std::vector<std::complex<double>>& signal, const std::vector<double>& coeffs)
+{
+    int N = coeffs.size();
+    int len = signal.size();
+    int newLen = len;
+    if (isntPow2(newLen)) // Если длина не является степенью двойки
+    {
+        newLen = pow(2, ceil(log2(newLen + N - 1)));
+    }
+
+    // Добавление нулей входному сигналу и фильтру
+    std::vector<std::complex<double>> inWithZeroes(newLen);
+    std::vector<std::complex<double>> coeffsWithZeroes(newLen);
+    for (int i = 0; i < len; ++i)
+    {
+        inWithZeroes[i] = signal[i];
+        if (i < N)
+        {
+            coeffsWithZeroes[i] = coeffs[i];
+        }
+    }
+    auto inFft = Fft::fft(inWithZeroes, true);
+    auto coeffsFft = Fft::fft(coeffsWithZeroes, true);
+
+    // Умножение преобразованных сигналов
+    std::vector<std::complex<double>> outputFft(newLen);
+    for (int i = 0; i < newLen; ++i)
+    {
+        outputFft[i] = inFft[i] * coeffsFft[i];
+    }
+    return Fft::fft(outputFft, false);
 }
 
 std::vector<double> FIR::getFilterCoeffs(int filterSize, double passbandFreq, double stopbandFreq, double sampleRate)

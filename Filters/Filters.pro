@@ -10,23 +10,21 @@ CONFIG += c++17
 
 SOURCES += \
     cic.cpp \
-    cic_old.cpp \
     fft_filter.cpp \
     fir.cpp \
-    ft.cpp \
     main.cpp \
     mainwindow.cpp \
+    plotter.cpp \
     signalgen.cpp \
     qcustomplot.cpp \
     fft.cpp
 
 HEADERS += \
     cic.h \
-    cic_old.h \
     fft_filter.h \
     fir.h \
-    ft.h \
     mainwindow.h \
+    plotter.h \
     signalgen.h \
     qcustomplot.h \
     fft.hpp
