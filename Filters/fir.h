@@ -13,7 +13,6 @@ public:
     static int pow2(int len);
     static bool isntPow2(int len);
 
-    static std::vector<std::complex<double>> compensatePhaseDelay(const std::vector<std::complex<double>> &signal, int filterSize);
     static std::vector<std::complex<double>> compensateDelay(const std::vector<std::complex<double>> &signal, int filterSize, int oldLen);
 
     static std::vector<double> getLowPassFilterCoeffs(int filterSize, double cutoffFreq, double sampleRate);

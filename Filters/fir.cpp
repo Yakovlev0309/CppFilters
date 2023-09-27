@@ -51,20 +51,6 @@ FIR::FIR()
 
 }
 
-std::vector<std::complex<double>> FIR::compensatePhaseDelay(const std::vector<std::complex<double>> &signal, int filterSize)
-{
-    std::vector<std::complex<double>> withoutDelays = signal;
-    auto begin = withoutDelays.begin();
-    auto end = withoutDelays.begin() + filterSize / 2;
-    withoutDelays.erase(begin, end);
-
-    begin = withoutDelays.end() - filterSize / 2;
-    end = withoutDelays.end();
-    withoutDelays.erase(begin, end);
-
-    return withoutDelays;
-}
-
 std::vector<std::complex<double>> FIR::compensateDelay(const std::vector<std::complex<double>> &signal, int filterSize, int oldLen)
 {
     std::vector<std::complex<double>> withoutDelays = signal;
@@ -72,10 +58,7 @@ std::vector<std::complex<double>> FIR::compensateDelay(const std::vector<std::co
     auto end = withoutDelays.begin() + filterSize / 2;
     withoutDelays.erase(begin, end);
 
-    int excess = signal.size() - oldLen - filterSize;
-    if (filterSize % 2 != 0)
-        excess += 1;
-    begin = withoutDelays.end() - filterSize / 2 - excess;
+    begin = withoutDelays.begin() + oldLen;
     end = withoutDelays.end();
     withoutDelays.erase(begin, end);
 
@@ -270,11 +253,7 @@ std::vector<std::complex<double>> FIR::applyFilterInSpectrum(const std::vector<s
 {
     int N = coeffs.size();
     int len = signal.size();
-    int newLen = len;
-    if (isntPow2(newLen)) // Если длина не является степенью двойки
-    {
-        newLen = pow(2, ceil(log2(newLen + N - 1)));
-    }
+    int newLen = pow(2, ceil(log2(len + N - 1)));
 
     // Добавление нулей входному сигналу и фильтру
     std::vector<std::complex<double>> inWithZeroes(newLen);

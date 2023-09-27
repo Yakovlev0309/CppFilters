@@ -211,17 +211,12 @@ void MainWindow::firFilter(const FilterType &filterType) // КИХ-фильтр
 
     plt.plot(coeffs, filterPlot);
     
-    QElapsedTimer t;
-    t.start();
 #ifndef FREQ_DOMAIN_DESIGN
     auto filtered = FIR::applyFilter(signal, coeffs);
-    filtered = FIR::compensatePhaseDelay(filtered, filterSize);
 #else
     auto filtered = FIR::applyFilterInSpectrum(signal, coeffs);
-    filtered = FIR::compensateDelay(filtered, filterSize, signal.size());
 #endif
-    qDebug() << t.nsecsElapsed() / 1e9 << "сек";
-    qDebug() << "filtered size =" << filtered.size();
+    filtered = FIR::compensateDelay(filtered, filterSize, samplesCount);
 
 //    auto filtered = FIR::filter(signal, coeffs);
     plt.plot(filtered, filteredPlot);
@@ -333,7 +328,7 @@ void MainWindow::on_cicFilter_clicked()
 
     auto filtered = CIC::cic_decimation_filter(signal, R, M, N);
     filtered = FIR::applyFilterInSpectrum(filtered, coeffs);
-    filtered = FIR::compensatePhaseDelay(filtered, filterSize);
+    filtered = FIR::compensateDelay(filtered, filterSize, samplesCount);
     plt.plot(filtered, filteredPlot);
 
     auto signalSpectrum = absComplex(Fft::fft(signal, true));
